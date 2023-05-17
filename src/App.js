@@ -1,9 +1,23 @@
 import logo from './logo.svg';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
+
+const initialState = {
+  count: 0,
+  isCircleTurn: true,
+  progress: true,
+  cells: new Array(9)
+}
+
+export default class App extends React.Component() {
+  constructor(props) {
+    super(props);
+    this.state = {...initialState};
+  }
+
+  render() {
+    return (
+      <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -14,12 +28,12 @@ function App() {
           href="https://reactjs.org"
           target="_blank"
           rel="noopener noreferrer"
-        >
+          >
           Learn React
         </a>
       </header>
-    </div>
-  );
+      </div>
+    );
+  }
 }
 
-export default App;
