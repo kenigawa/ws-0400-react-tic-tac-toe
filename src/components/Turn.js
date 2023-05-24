@@ -1,30 +1,28 @@
-import { styled } from "styled-components";
+import styled from 'styled-components';
 
-const Container = styled.div`
-    display: flex;
-`
+const TurnContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;
 
 const TurnElement = styled.div`
-    padding: 8px 16px;
-    font-size: 1.5rem;
-    width: 100%;
-    text-align: center;
-    border-bottom: ${isCircleTurn => isCircleTurn ? "4px solid black" : "0"};
-`
+  padding: 8px 16px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-bottom: ${({$isTurn}) => ($isTurn === true ? '3px solid black' : '0')};
+`;
 
-const Turn = ({isCircleTurn, characters}) => {
-    return (
-        <Container>
-            {characters.map(item => {
-                return (
-                    <TurnElement key={item} isCircleTurn={isCircleTurn}>
-                        {item}
-                    </TurnElement>
-                );
-            })}
-        </Container>
-    );
-};
-
-
-export default Turn;
+export default function Turn({ turns, turnChar }) {
+  return(
+    <TurnContainer>
+      {turns.map(item => {
+        const isTurn = item === turnChar;
+        return(
+          <TurnElement key={item} $isTurn={isTurn}>
+            {item}
+          </TurnElement>
+        );
+      })}
+    </TurnContainer>
+  );
+}
