@@ -56,30 +56,72 @@ const Restart = ({ onRestart }) => {
   );
 }
 
+const CHARACTERS = {
+  circle: "○",
+  cross: "×"
+}
+
+const STATUS_TEXT = {
+  processing: "processing",
+  win: "win",
+  draw: "draw"
+}
+
+const winPatterns = [
+  [0, 1, 2], [3, 4, 5], [6, 7, 8],
+  [0, 3, 6], [1, 4, 7], [2, 5, 8],
+  [0, 4, 8], [2, 4, 6]
+];
+
+function judgeWinner(squares) {
+  // 全ての勝利パターンに一致がないか確認
+  for(let i = 0; i < winPatterns.length; i++) {
+    const [first, second, third] = winPatterns[i];
+    // 3つとも記号が同じの場合
+    if(squares[first] && squares[first] === squares[second] && squares[first] === squares[third]) {
+      return squares[first];
+    }
+  }
+  return null;
+}
+
 export default function App() {
-  const CHARACTERS = {
-    circle: "○",
-    cross: "×"
-  }
-
-  const STATUS_TEXT = {
-    processing: "processing",
-    win: "win",
-    draw: "draw"
-  }
-
   // state
-  const [oIsNext, setoIsNext] = useState(true); 
+  const [oIsNext, setoIsNext] = useState(true);
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [count, setCount] = useState(0);
   const [turnChar, setTurnChar] = useState(CHARACTERS.circle);
   const [statusText, setStatusText] = useState(STATUS_TEXT.processing);
 
-  function handlePlay(nextSquares) {
+  function changeStatus(winner) {
+    // どちらかが勝ちの場合
+    if(winner) {
+      setStatusText(`${winner} ${STATUS_TEXT.win}`);
+    }
+
+    // 引き分けの場合
+    if(!winner && count + 1 === 9) {
+      setStatusText(STATUS_TEXT.draw);
+    }
+  }
+
+  function handlePlay(index) {
+    const processing = statusText === STATUS_TEXT.processing
+    if(squares[index] || !processing) {
+      return;
+    }
+
+    // 配列のコピーを作成
+    const nextSquares = squares.slice();
+    nextSquares[index] = oIsNext === true ? CHARACTERS.circle : CHARACTERS.cross
+
     setSquares(nextSquares);
     setoIsNext(!oIsNext);
     setCount((prev) => prev + 1);
     setTurnChar((prev) => prev === CHARACTERS.circle ? CHARACTERS.cross : CHARACTERS.circle);
+
+    const winner = judgeWinner(nextSquares);
+    changeStatus(winner);
   }
 
   function restartPlay() {
@@ -88,20 +130,6 @@ export default function App() {
     setCount(0);
     setTurnChar(CHARACTERS.circle);
     setStatusText(STATUS_TEXT.processing);
-  }
-  
-  function changeStatus(winner) {
-    let status;
-    // どちらかが勝ちの場合
-    if(winner) {
-      status = winner + " " + STATUS_TEXT.win;
-      setStatusText(status);
-    }  
-    // 引き分けの場合
-    if(!winner && count === 9) {
-      status = STATUS_TEXT.draw;
-      setStatusText(status);
-    }
   }
 
   return(
@@ -117,7 +145,6 @@ export default function App() {
             squares={squares}
             characters={CHARACTERS}
             onPlay={handlePlay}
-            onChangeStatus={changeStatus}
           />
           <Footer>
             <Status>{statusText}</Status>
