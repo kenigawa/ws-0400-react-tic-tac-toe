@@ -9,16 +9,16 @@ const TurnElement = styled.div`
   padding: 8px 16px;
   font-size: 1.2rem;
   font-weight: bold;
-  border-bottom: ${({$isTurn}) => ($isTurn === true ? '3px solid black' : '0')};
+  border-bottom: ${({active}) => (active === 'true' ? '3px solid black' : '0')};
 `;
 
 export default function Turn({ turns, turnChar }) {
   return(
     <TurnContainer>
       {turns.map(item => {
-        const isTurn = item === turnChar;
+        const active = item === turnChar;
         return(
-          <TurnElement key={item} $isTurn={isTurn}>
+          <TurnElement key={item} active={String(active)}>
             {item}
           </TurnElement>
         );
